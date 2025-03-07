@@ -1,0 +1,28 @@
+services:
+  back:
+    build: ./back
+    container_name: back
+    volumes:
+      - ./back:/back
+    networks:
+      - app-network
+
+  front:
+    build: ./front
+    container_name: front
+    volumes: 
+      - ./front:/front
+    networks:
+      - app-network
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    networks:
+      - app-network
+    ports:
+      - 8080:80
+
+networks:
+  app-network:
+    driver: bridge
