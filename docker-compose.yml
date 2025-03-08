@@ -6,6 +6,8 @@ services:
       - ./back:/back
     networks:
       - app-network
+    ports:
+      - 5555:5555
 
   front:
     build: ./front
