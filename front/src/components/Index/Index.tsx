@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router"
+
 function RegisterForm() {
 	const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault()
@@ -20,8 +22,9 @@ function RegisterForm() {
 
 		const message = (await res.json()).message[0]
 
-		if (res.status >= 400)
+		if (res.status >= 400) {
 			alert(message)
+		}
 	}
 
 	return <>
@@ -34,7 +37,7 @@ function RegisterForm() {
 	</>
 }
 
-function LoginForm() {
+function LoginForm({setAuthenticated}: {setAuthenticated: (authenticated: boolean) => void}) {
 	const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault()
 		const formData = new FormData(e.currentTarget)
@@ -48,7 +51,13 @@ function LoginForm() {
 			body: JSON.stringify(body),
 			headers: {"Content-Type": "application/json"}
 		})
-		console.log(await res.text())
+
+		if (res.status >= 400) {
+			const message = (await res.json()).message
+			alert(message)
+			return
+		}
+		setAuthenticated(true)
 	}
 
 	return <>
@@ -58,14 +67,11 @@ function LoginForm() {
 			<button type="submit">Login</button>
 		</form>
 	</>
-
 }
 
-export default function Index() {
-  return (
-	  <>
-	  	<RegisterForm/>
-		<LoginForm/>
-	  </>
-  )
+export default function Index({setAuthenticated}: {setAuthenticated: (authenticated: boolean) => void}) {
+	return <>
+		<RegisterForm/>
+		<LoginForm setAuthenticated={setAuthenticated}/>
+	</>
 }

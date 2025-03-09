@@ -1,0 +1,37 @@
+import { BrowserRouter, Routes, Route } from "react-router"
+import Home from './components/Home/Home.tsx'
+import Index from './components/Index/Index.tsx'
+import NotFound from './components/NotFound/NotFound.tsx'
+import { useEffect, useState } from "react"
+
+
+export default function AppRoutes() {
+	const [authenticated, setAuthenticated] = useState(false)
+
+	useEffect(() => {
+		(async () => {
+			const res = await fetch("/api/users/authenticated")
+			setAuthenticated(await res.json())
+		})()
+	}, [])
+
+	function getUsableRoutes() {
+		if (authenticated) {
+			return <>
+				<Route path="/home" element={<Home {...{setAuthenticated}} />} />
+			</>
+		}
+		return <>
+			<Route path="/" element={<Index {...{setAuthenticated}}/>} />
+		</>
+	}
+
+	return  <>
+		<BrowserRouter>
+			<Routes>
+				{getUsableRoutes()}
+				<Route path="*" element={<NotFound authenticated={authenticated}/>} />
+			</Routes>
+		</BrowserRouter>
+	</>
+}
