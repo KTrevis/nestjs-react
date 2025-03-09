@@ -22,6 +22,7 @@ export class UsersService {
 				username: username
 			},
 		})
+
 		const hashed = user?.password
 
 		if (hashed == undefined)
