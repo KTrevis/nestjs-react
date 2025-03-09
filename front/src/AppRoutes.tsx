@@ -1,8 +1,8 @@
+import { useEffect, useState } from "react"
 import { BrowserRouter, Routes, Route } from "react-router"
 import Home from './components/Home/Home.tsx'
 import Index from './components/Index/Index.tsx'
 import NotFound from './components/NotFound/NotFound.tsx'
-import { useEffect, useState } from "react"
 import Friends from "./components/Friends/Friends.tsx"
 import Navbar from "./components/Navbar/Navbar.tsx"
 
@@ -11,8 +11,12 @@ export default function AppRoutes() {
 
 	useEffect(() => {
 		(async () => {
-			const res = await fetch("/api/users/authenticated")
-			setAuthenticated(await res.json())
+			const res = await fetch("/api/auth/authenticated")
+			
+			if (res.status >= 400)
+				setAuthenticated(false)
+			else
+				setAuthenticated(await res.json())
 		})()
 	}, [])
 

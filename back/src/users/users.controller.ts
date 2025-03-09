@@ -18,24 +18,4 @@ export class UsersController {
 
 		return {message: ["Account succesfully created."]}
 	}
-
-	@Post("login")
-	async login(@Body() body: UsersCredentialsDto, @Session() session: Record<string, any>) {
-		const user = await this.usersService.login(body.username, body.password)
-		if (user == null) {
-			throw new HttpException("Invalid credentials.", HttpStatus.UNAUTHORIZED)
-		}
-		session.user = user
-		return body
-	}
-
-	@Get("logout")
-	logout(@Session() session: Record<string, any>) {
-		session.user = undefined
-	}
-
-	@Get("authenticated")
-	async isLoggedIn(@Session() session: Record<string, any>) {
-		return session.user != undefined
-	}
 }

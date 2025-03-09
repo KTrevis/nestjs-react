@@ -7,7 +7,7 @@ export default function LoginForm({setAuthenticated}: {setAuthenticated: (authen
 			password: formData.get("password"),
 		}
 
-		const res = await fetch("/api/users/login", {
+		const res = await fetch("/api/auth/login", {
 			method: "POST",
 			body: JSON.stringify(body),
 			headers: {"Content-Type": "application/json"}
@@ -18,6 +18,9 @@ export default function LoginForm({setAuthenticated}: {setAuthenticated: (authen
 			alert(message)
 			return
 		}
+
+		const token = (await res.json()).access_token
+		document.cookie = `jwt=${token}`
 		setAuthenticated(true)
 	}
 

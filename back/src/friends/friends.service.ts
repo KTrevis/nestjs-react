@@ -35,7 +35,7 @@ export class FriendsService {
 			throw new ForbiddenException("You cannot add yourself to your friends.")
 		}
 
-		const recipient = await this.usersService.findUser(username)
+		const recipient = await this.usersService.findOne(username)
 
 		if (recipient == null) {
 			throw new NotFoundException("No user with this username found.")

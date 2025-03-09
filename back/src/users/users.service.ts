@@ -16,21 +16,7 @@ export class UsersService {
 		})
 	}
 
-	async login(username: string, password: string): Promise<User | null> {
-		const user = await this.findUser(username)
-		
-		if (user == null) {
-			return null
-		}
-
-		const hashed = user.password
-
-		if (await compare(password, hashed) == true)
-			return user
-		return null
-	}
-
-	async findUser(username: string) {
+	async findOne(username: string) {
 		return await this.prisma.user.findUnique({
 			where: {
 				username: username
