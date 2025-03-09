@@ -7,7 +7,7 @@ function AddFriend() {
 		e.preventDefault()
 		const formData = new FormData(e.currentTarget)
 		const username = formData.get("username")
-		const res = await fetch(`/api/friends/add?username=${username}`)
+		const res = await fetch(`/api/friends/invite?username=${username}`)
 		console.log(await res.json())
 	}
 

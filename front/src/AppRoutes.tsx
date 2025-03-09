@@ -7,7 +7,7 @@ import Friends from "./components/Friends/Friends.tsx"
 import Navbar from "./components/Navbar/Navbar.tsx"
 
 export default function AppRoutes() {
-	const [authenticated, setAuthenticated] = useState(false)
+	const [authenticated, setAuthenticated] = useState(true)
 
 	useEffect(() => {
 		(async () => {
