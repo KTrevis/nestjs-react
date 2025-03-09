@@ -20,7 +20,7 @@ export class UsersService {
 		const user = await this.prisma.user.findUnique({
 			where: {
 				username: username
-			}
+			},
 		})
 		const hashed = user?.password
 

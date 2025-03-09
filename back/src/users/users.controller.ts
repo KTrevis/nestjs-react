@@ -1,12 +1,10 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Redirect, Req, Session, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, Session, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UsersCredentialsDto } from './users.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-	constructor(
-		private readonly usersService: UsersService,
-			   ) {}
+	constructor(private usersService: UsersService) {}
 
 	@Post("register")
 	@UsePipes(new ValidationPipe())
@@ -14,7 +12,7 @@ export class UsersController {
 		try {
 			await this.usersService.createUser(body.username, body.password)
 		} catch {
-			const data = {message: ["This username is already taken"]}
+			const data = {message: ["This username is already taken."]}
 			throw new HttpException(data, HttpStatus.FORBIDDEN)
 		}
 
@@ -23,21 +21,21 @@ export class UsersController {
 
 	@Post("login")
 	async login(@Body() body: UsersCredentialsDto, @Session() session: Record<string, any>) {
-		if (await this.usersService.login(body.username, body.password) == null) {
+		const user = await this.usersService.login(body.username, body.password)
+		if (user == null) {
 			throw new HttpException("Invalid credentials.", HttpStatus.UNAUTHORIZED)
 		}
-		session.authenticated = true
+		session.user = user
 		return body
 	}
 
 	@Get("logout")
-	@Redirect("/")
 	logout(@Session() session: Record<string, any>) {
-		session.authenticated = false
+		session.user = undefined
 	}
 
 	@Get("authenticated")
 	async isLoggedIn(@Session() session: Record<string, any>) {
-		return session.authenticated == true
+		return session.user != undefined
 	}
 }

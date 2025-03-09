@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { LoggerMiddleware } from './session/logger.middleware';
+import { LoggerMiddleware } from './logger/logger.middleware';
 
 @Module({
   imports: [UsersModule, PrismaModule],

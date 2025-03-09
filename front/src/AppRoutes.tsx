@@ -3,7 +3,8 @@ import Home from './components/Home/Home.tsx'
 import Index from './components/Index/Index.tsx'
 import NotFound from './components/NotFound/NotFound.tsx'
 import { useEffect, useState } from "react"
-
+import Friends from "./components/Friends/Friends.tsx"
+import Navbar from "./components/Navbar/Navbar.tsx"
 
 export default function AppRoutes() {
 	const [authenticated, setAuthenticated] = useState(false)
@@ -18,7 +19,8 @@ export default function AppRoutes() {
 	function getUsableRoutes() {
 		if (authenticated) {
 			return <>
-				<Route path="/home" element={<Home {...{setAuthenticated}} />} />
+				<Route path="/home" element={<Home/>}/>
+				<Route path="/friends" element={<Friends/>}/>
 			</>
 		}
 		return <>
@@ -28,9 +30,10 @@ export default function AppRoutes() {
 
 	return  <>
 		<BrowserRouter>
+			<Navbar {...{setAuthenticated, authenticated}}/>
 			<Routes>
 				{getUsableRoutes()}
-				<Route path="*" element={<NotFound authenticated={authenticated}/>} />
+				<Route path="*" element={<NotFound {...{authenticated}}/>} />
 			</Routes>
 		</BrowserRouter>
 	</>

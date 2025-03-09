@@ -1,8 +1,5 @@
-import Navbar from "../Navbar/Navbar"
-
-export default function Home({setAuthenticated}: {setAuthenticated: (authenticated: boolean) => void}) {
+export default function Home() {
 	return <>
-		<Navbar {...{setAuthenticated}} />
 		<div>HOME</div>
 	</>
 }
