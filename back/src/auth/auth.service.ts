@@ -14,7 +14,7 @@ export class AuthService {
 		const user = await this.usersService.findOne(username)
 
 		if (user == null || await compare(password, user.password) == false) {
-			throw new UnauthorizedException()
+			throw new UnauthorizedException("Invalid credentials.")
 		}
 
 		const payload = { sub: user.id, username: user.username }

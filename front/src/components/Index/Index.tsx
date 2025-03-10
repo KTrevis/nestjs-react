@@ -4,7 +4,7 @@ import RegisterForm from "./RegisterForm"
 
 export default function Index({setAuthenticated}: {setAuthenticated: (authenticated: boolean) => void}) {
 	return <>
-		<RegisterForm/>
+		<RegisterForm setAuthenticated={setAuthenticated}/>
 		<LoginForm setAuthenticated={setAuthenticated}/>
 	</>
 }

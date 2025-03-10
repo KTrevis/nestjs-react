@@ -1,3 +1,15 @@
+// ************************************************************************** //
+//                                                                            //
+//                                                        :::      ::::::::   //
+//   friends.service.ts                                 :+:      :+:    :+:   //
+//                                                    +:+ +:+         +:+     //
+//   By: ketrevis <ketrevis@student.42.fr>          +#+  +:+       +#+        //
+//                                                +#+#+#+#+#+   +#+           //
+//   Created: 2025/03/10 10:15:00 by ketrevis          #+#    #+#             //
+//   Updated: 2025/03/10 10:32:10 by ketrevis         ###   ########.fr       //
+//                                                                            //
+// ************************************************************************** //
+
 import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -14,7 +26,7 @@ export class FriendsService {
 		const friendship = await this.prisma.friendship.findFirst({
 			where: {
 				senderId: user1,
-				recipientId: user2,
+				recipientId: user2
 			}
 		})
 
@@ -57,5 +69,18 @@ export class FriendsService {
 				recipientId: recipient.id
 			}
 		})
+		return { message: "Invitation sent." }
+	}
+
+	async getRequestsReceived(user: User) {
+		const invitations = await this.prisma.friendship.findMany({
+			where: {
+				recipientId: user.id
+			},
+			include: {
+				sender: true
+			}
+		})
+		return Array.from(invitations, (invitation) => invitation.sender.username)
 	}
 }

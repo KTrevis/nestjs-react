@@ -1,4 +1,9 @@
+import { Alert, Button, Input } from "@mui/material"
+import { useState } from "react"
+
 export default function LoginForm({setAuthenticated}: {setAuthenticated: (authenticated: boolean) => void}) {
+	const [error, setError] = useState("")
+
 	const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault()
 		const formData = new FormData(e.currentTarget)
@@ -15,7 +20,7 @@ export default function LoginForm({setAuthenticated}: {setAuthenticated: (authen
 
 		if (res.status >= 400) {
 			const message = (await res.json()).message
-			alert(message)
+			setError(message)
 			return
 		}
 
@@ -26,9 +31,10 @@ export default function LoginForm({setAuthenticated}: {setAuthenticated: (authen
 
 	return <>
 		<form onSubmit={onSubmit}>
-			<input placeholder="Username" type="text" name="username" />
-			<input placeholder="Password" type="password" name="password" />
-			<button type="submit">Login</button>
+			{ error != "" ? <Alert severity="error">{error}</Alert> : "" }
+			<Input placeholder="Username" type="text" name="username" />
+			<Input placeholder="Password" type="password" name="password" />
+			<Button variant="contained" type="submit">Login</Button>
 		</form>
 	</>
 }

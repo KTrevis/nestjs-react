@@ -1,32 +1,32 @@
-import { Link } from "react-router"
-import "./Navbar.scss"
-import { useState } from "react"
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import { Link } from "react-router";
+import { Menu } from "@mui/icons-material";
 
-type NavBarParams = {
+export default function Navbar({authenticated, setAuthenticated}: {
 	setAuthenticated: (authenticated: boolean) => void,
 	authenticated: boolean,
-}
-
-function NavbarContent({authenticated, setAuthenticated}: NavBarParams) {
-	const logout: React.MouseEventHandler<HTMLAnchorElement> = async (e) => {
+}) {
+	const logout: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
 		e.preventDefault()
-		await fetch("/api/users/logout")
+		document.cookie = "jwt="
 		setAuthenticated(false)
 	}
 
 	return <>
-		<Link to="/friends">Friends</Link>
-		{ authenticated ? <a href="/api/users/logout" onClick={logout}>Logout</a> : "" }
-	</>
-}
-
-export default function Navbar({authenticated, setAuthenticated}: NavBarParams) {
-	const [visible, setVisibility] = useState(false)
-
-	return <>
-		<nav id="navbar">
-			<button onClick={() => setVisibility(!visible)}>Toggle navbar content</button>
-			{ visible ? <NavbarContent {...{setAuthenticated, authenticated}}/> : "" }
-		</nav>
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<Menu/>}
+		  sx={{ flexDirection: "row-reverse" }}
+          aria-controls="panel1-content"
+          id="panel1-header">
+        </AccordionSummary>
+        <AccordionDetails>
+			<Link to="/home">Home</Link>
+			<Link to="/friends">Friends</Link>
+			<a href="/logout" onClick={logout}>Logout</a>
+        </AccordionDetails>
+      </Accordion>
 	</>
 }

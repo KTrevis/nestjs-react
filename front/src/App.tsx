@@ -9,11 +9,17 @@ import Navbar from "./components/Navbar/Navbar.tsx"
 export default function AppRoutes() {
 	const [authenticated, setAuthenticated] = useState(true)
 
+	async function getAuthStatus() {
+		const res = await fetch("/api/auth/authenticated")
+		setAuthenticated(res.status < 400) // if no error = authenticated
+		
+		if (res.status == 502) {
+			setTimeout(getAuthStatus, 1000)
+		}
+	}
+
 	useEffect(() => {
-		(async () => {
-			const res = await fetch("/api/auth/authenticated")
-			setAuthenticated(res.status < 400) // if no error = authenticated
-		})()
+		getAuthStatus()
 	}, [])
 
 	function getUsableRoutes() {
@@ -30,7 +36,7 @@ export default function AppRoutes() {
 
 	return  <>
 		<BrowserRouter>
-			<Navbar {...{setAuthenticated, authenticated}}/>
+			{ authenticated ? <Navbar {...{setAuthenticated, authenticated}}/> : "" }
 			<Routes>
 				{getUsableRoutes()}
 				<Route path="*" element={<NotFound {...{authenticated}}/>} />

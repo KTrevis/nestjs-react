@@ -1,4 +1,14 @@
-export default function RegisterForm() {
+import { Alert, Button, Input } from "@mui/material"
+import { useState } from "react"
+import { ServerMessage } from "../../utils/ServerMessage"
+
+export default function RegisterForm({setAuthenticated}: {setAuthenticated: (authenticated: boolean) => void}) {
+	const [loading, setLoading] = useState(false)
+	const [message, setMessage] = useState<ServerMessage>({
+		severity: "error",
+		message: ""
+	}) 
+
 	const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault()
 		const formData = new FormData(e.currentTarget)
@@ -8,29 +18,43 @@ export default function RegisterForm() {
 		}
 
 		if (body.password != formData.get("confirm-password")) {
-			alert("Passwords do not match.")
+			setMessage({
+				severity: "error",
+				message: "Passwords do not match."
+			})
 			return
 		}
 
+		setLoading(true)
 		const res = await fetch("/api/users/register", {
 			method: "POST",
 			body: JSON.stringify(body),
 			headers: {"Content-Type": "application/json"}
 		})
+		setLoading(false)
 
 		const message = (await res.json()).message[0]
 
 		if (res.status >= 400) {
-			alert(message)
+			setMessage({
+				severity: "error",
+				message: message
+			})
+			return
 		}
+		setMessage({
+			severity: "success",
+			message: "Account created. You can log in."
+		})
 	}
 
 	return <>
 		<form onSubmit={onSubmit}>
-			<input placeholder="Username" type="text" name="username" />
-			<input placeholder="Password" type="password" name="password" />
-			<input placeholder="Confirm password" type="password" name="confirm-password" />
-			<button type="submit">Register</button>
+			{ message.message != "" ? <Alert severity={message.severity}>{message.message}</Alert> : "" }
+			<Input placeholder="Username" type="text" name="username" />
+			<Input placeholder="Password" type="password" name="password" />
+			<Input placeholder="Confirm password" type="password" name="confirm-password" />
+			<Button variant="contained" disabled={loading} type="submit">Register</Button>
 		</form>
 	</>
 }

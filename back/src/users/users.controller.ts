@@ -1,12 +1,14 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Post, Session, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UsersCredentialsDto } from './users.dto';
 import { UsersService } from './users.service';
+import { Public } from 'src/auth/auth.decorator';
 
 @Controller('users')
 export class UsersController {
 	constructor(private usersService: UsersService) {}
 
 	@Post("register")
+	@Public()
 	@UsePipes(new ValidationPipe())
 	async register(@Body() body: UsersCredentialsDto) {
 		try {

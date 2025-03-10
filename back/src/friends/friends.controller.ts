@@ -17,4 +17,9 @@ export class FriendsController {
 	sendInvitation(@UserSession() user: User, @Query() body: AddFriendDto) {
 		return this.friendsService.sendInvitation(user, body.username)
 	}
+
+	@Get("requests-received")
+	getRequestsReceived(@UserSession() user: User) {
+		return this.friendsService.getRequestsReceived(user)
+	}
 }
