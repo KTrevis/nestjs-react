@@ -1,6 +1,6 @@
-import { Alert, Button, Input } from "@mui/material"
+import { Button, Input } from "@mui/material"
 import { useState } from "react"
-import { ServerMessage } from "../../utils/ServerMessage"
+import ServerAlert, { ServerMessage } from "../../utils/ServerMessage"
 
 export default function RegisterForm({setAuthenticated}: {setAuthenticated: (authenticated: boolean) => void}) {
 	const [loading, setLoading] = useState(false)
@@ -33,7 +33,7 @@ export default function RegisterForm({setAuthenticated}: {setAuthenticated: (aut
 		})
 		setLoading(false)
 
-		const message = (await res.json()).message[0]
+		const message: string = (await res.json()).message[0]
 
 		if (res.status >= 400) {
 			setMessage({
@@ -50,7 +50,7 @@ export default function RegisterForm({setAuthenticated}: {setAuthenticated: (aut
 
 	return <>
 		<form onSubmit={onSubmit}>
-			{ message.message != "" ? <Alert severity={message.severity}>{message.message}</Alert> : "" }
+			<ServerAlert message={message}/>
 			<Input placeholder="Username" type="text" name="username" />
 			<Input placeholder="Password" type="password" name="password" />
 			<Input placeholder="Confirm password" type="password" name="confirm-password" />

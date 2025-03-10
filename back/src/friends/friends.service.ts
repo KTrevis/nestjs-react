@@ -1,15 +1,3 @@
-// ************************************************************************** //
-//                                                                            //
-//                                                        :::      ::::::::   //
-//   friends.service.ts                                 :+:      :+:    :+:   //
-//                                                    +:+ +:+         +:+     //
-//   By: ketrevis <ketrevis@student.42.fr>          +#+  +:+       +#+        //
-//                                                +#+#+#+#+#+   +#+           //
-//   Created: 2025/03/10 10:15:00 by ketrevis          #+#    #+#             //
-//   Updated: 2025/03/10 10:32:10 by ketrevis         ###   ########.fr       //
-//                                                                            //
-// ************************************************************************** //
-
 import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -58,7 +46,7 @@ export class FriendsService {
 			let error = "This friendship already exists."
 
 			if (friendship.pending) {
-				error += " An invitation is pending."
+				error += " The invitation is pending."
 			}
 			throw new ConflictException(error)
 		}
@@ -75,12 +63,74 @@ export class FriendsService {
 	async getRequestsReceived(user: User) {
 		const invitations = await this.prisma.friendship.findMany({
 			where: {
-				recipientId: user.id
+				recipientId: user.id,
+				pending: true
 			},
 			include: {
 				sender: true
 			}
 		})
 		return Array.from(invitations, (invitation) => invitation.sender.username)
+	}
+
+	async acceptRequest(recipient: User, sender: User) {
+		const friendship = await this.prisma.friendship.findFirst({
+			where: {
+				sender: sender,
+				recipient: recipient,
+				pending: true
+			}
+		})
+
+		if (friendship == null) {
+			throw new NotFoundException("No pending friendship invitation found with this user.")
+		}
+
+		await this.prisma.friendship.update({
+			where: {
+				id: friendship.id
+			},
+			data: {
+				pending: false,
+			}
+		})
+		return {message: "Friend invitation accepted."}
+	}
+
+	async removeFriend(user: User, friend: User) {
+		const friendship = await this.getFriendship(user.id, friend.id)
+
+		if (friendship == null) {
+			throw new NotFoundException("No friendship exists with this user.")
+		}
+
+		await this.prisma.friendship.delete({
+			where: {
+				id: friendship.id
+			}
+		})
+		return {message: "Friendship successfully deleted."}
+	}
+
+	async getFriends(user: User) {
+		const friendships = await this.prisma.friendship.findMany({
+			where: {
+				OR: [
+					{ recipient: user },
+					{ sender: user }
+				],
+				pending: false
+			},
+			include: {
+				sender: true,
+				recipient: true
+			}
+		})
+		return Array.from(friendships, friendship => {
+			if (friendship.sender.username != user.username) {
+				return friendship.sender.username
+			}
+			return friendship.recipient.username
+		})
 	}
 }

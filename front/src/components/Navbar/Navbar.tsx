@@ -22,7 +22,7 @@ export default function Navbar({authenticated, setAuthenticated}: {
           aria-controls="panel1-content"
           id="panel1-header">
         </AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails style={{textAlign: "center"}}>
 			<Link to="/home">Home</Link>
 			<Link to="/friends">Friends</Link>
 			<a href="/logout" onClick={logout}>Logout</a>

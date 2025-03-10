@@ -1,32 +1,27 @@
-import { Alert, Button, Input } from "@mui/material"
-import { ServerMessage } from "../../utils/ServerMessage"
-import { useState } from "react"
+import { Button, Input } from "@mui/material"
+import { ServerMessage, } from "../../utils/ServerMessage"
 
-export default function AddFriend() {
-	const [message, setMessage] = useState<ServerMessage>({severity: "error", message: ""})
-
+export default function AddFriend({setMessage}: {setMessage: (message: ServerMessage) => void}) {
 	const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault()
-		const formData = new FormData(e.currentTarget)
+		const form = e.currentTarget
+		const formData = new FormData(form)
 		const username = formData.get("username")
-		const res = await fetch(`/api/friends/invite?username=${username}`)
-		const newMessage = {...message}
+		const res = await fetch(`/api/friends/invite/${username}`, {
+			method: "POST"
+		})
 
-		if (res.status >= 400) {
-			newMessage.severity = "error"
-		} else {
-			newMessage.severity = "success"
-		}
-		newMessage.message = (await res.json()).message
-		setMessage(newMessage)
+		setMessage({
+			severity: res.status >= 400 ? "error" : "success",
+				message: (await res.json()).message 
+		})
+		form.reset()
 	}
 
 	return <>
 		<form onSubmit={onSubmit}>
-			{ message.message != "" ? <Alert severity={message.severity}>{message.message}</Alert> : "" }
-			<label htmlFor="username">Add friend</label>
 			<Input type="text" placeholder="Username" name="username"/>
-			<Button variant="contained" type="submit">Send invitation</Button>
+			<Button variant="contained" type="submit">Send friend invitation</Button>
 		</form>
 	</>
 }

@@ -1,8 +1,9 @@
-import { Alert, Button, Input } from "@mui/material"
+import { Button, Input } from "@mui/material"
 import { useState } from "react"
+import ServerAlert, { ServerMessage } from "../../utils/ServerMessage"
 
 export default function LoginForm({setAuthenticated}: {setAuthenticated: (authenticated: boolean) => void}) {
-	const [error, setError] = useState("")
+	const [message, setMessage] = useState<ServerMessage>({severity: "info", message: ""})
 
 	const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault()
@@ -19,19 +20,21 @@ export default function LoginForm({setAuthenticated}: {setAuthenticated: (authen
 		})
 
 		if (res.status >= 400) {
-			const message = (await res.json()).message
-			setError(message)
+			setMessage({
+				severity: "error",
+				message: (await res.json()).message
+			})
 			return
 		}
 
-		const token = (await res.json()).access_token
+		const token: string = (await res.json()).access_token
 		document.cookie = `jwt=${token}`
 		setAuthenticated(true)
 	}
 
 	return <>
 		<form onSubmit={onSubmit}>
-			{ error != "" ? <Alert severity="error">{error}</Alert> : "" }
+			<ServerAlert message={message}/>
 			<Input placeholder="Username" type="text" name="username" />
 			<Input placeholder="Password" type="password" name="password" />
 			<Button variant="contained" type="submit">Login</Button>
