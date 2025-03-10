@@ -12,11 +12,7 @@ export default function AppRoutes() {
 	useEffect(() => {
 		(async () => {
 			const res = await fetch("/api/auth/authenticated")
-			
-			if (res.status >= 400)
-				setAuthenticated(false)
-			else
-				setAuthenticated(await res.json())
+			setAuthenticated(res.status < 400) // if no error = authenticated
 		})()
 	}, [])
 

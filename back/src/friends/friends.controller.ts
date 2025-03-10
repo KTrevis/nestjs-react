@@ -12,7 +12,6 @@ export class FriendsController {
 		private usersService: UsersService
 	) {}
 
-	// protect this route if user not logged in
 	@Get("invite")
 	@UsePipes(new ValidationPipe())
 	sendInvitation(@UserSession() user: User, @Query() body: AddFriendDto) {

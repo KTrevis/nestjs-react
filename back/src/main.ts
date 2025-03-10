@@ -10,7 +10,7 @@ async function bootstrap() {
 	app.use(cookieParser())
 	app.use(
 		session({
-			secret: "secret-key",
+			secret: "secret",
 			resave: false,
 			saveUninitialized: false,
 		})
