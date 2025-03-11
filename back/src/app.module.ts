@@ -4,9 +4,10 @@ import { PrismaModule } from './prisma/prisma.module';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { FriendsModule } from './friends/friends.module';
 import { AuthModule } from './auth/auth.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
-  imports: [UsersModule, PrismaModule, FriendsModule, AuthModule],
+  imports: [UsersModule, PrismaModule, FriendsModule, AuthModule, MessagesModule],
   controllers: [],
   providers: [],
 })

@@ -5,6 +5,7 @@ import Index from './components/Index/Index.tsx'
 import NotFound from './components/NotFound/NotFound.tsx'
 import Friends from "./components/Friends/Friends.tsx"
 import Navbar from "./components/Navbar/Navbar.tsx"
+import Messages from "./components/Messages/Messages.tsx"
 
 export default function AppRoutes() {
 	const [authenticated, setAuthenticated] = useState(true)
@@ -27,6 +28,7 @@ export default function AppRoutes() {
 			return <>
 				<Route path="/home" element={<Home/>}/>
 				<Route path="/friends" element={<Friends/>}/>
+				<Route path="/messages" element={<Messages/>}/>
 			</>
 		}
 		return <>

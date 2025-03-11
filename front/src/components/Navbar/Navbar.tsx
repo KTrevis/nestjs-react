@@ -25,6 +25,7 @@ export default function Navbar({authenticated, setAuthenticated}: {
         <AccordionDetails style={{textAlign: "center"}}>
 			<Link to="/home">Home</Link>
 			<Link to="/friends">Friends</Link>
+			<Link to="/messages">Messages</Link>
 			<a href="/logout" onClick={logout}>Logout</a>
         </AccordionDetails>
       </Accordion>

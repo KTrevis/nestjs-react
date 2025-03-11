@@ -19,6 +19,7 @@ model User {
   friendshipReceived Friendship[]     @relation("recipient")
   chatGroupUsers     ChatGroupUsers[]
   messages           Message[]
+  createGroups       ChatGroup[]
 }
 
 model Friendship {
@@ -36,6 +37,10 @@ model Friendship {
 model ChatGroup {
   id             Int              @id @default(autoincrement())
   name           String
+
+  creator        User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId      Int
+
   chatGroupUsers ChatGroupUsers[]
   messages       Message[]
 }
