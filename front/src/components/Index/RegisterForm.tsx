@@ -2,7 +2,7 @@ import { Button, Input } from "@mui/material"
 import { useState } from "react"
 import ServerAlert, { ServerMessage } from "../../utils/ServerMessage"
 
-export default function RegisterForm({setAuthenticated}: {setAuthenticated: (authenticated: boolean) => void}) {
+export default function RegisterForm() {
 	const [loading, setLoading] = useState(false)
 	const [message, setMessage] = useState<ServerMessage>({
 		severity: "error",

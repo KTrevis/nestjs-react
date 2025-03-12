@@ -38,7 +38,7 @@ export default function AppRoutes() {
 
 	return  <>
 		<BrowserRouter>
-			{ authenticated ? <Navbar {...{setAuthenticated, authenticated}}/> : "" }
+			{ authenticated ? <Navbar {...{setAuthenticated}}/> : "" }
 			<Routes>
 				{getUsableRoutes()}
 				<Route path="*" element={<NotFound {...{authenticated}}/>} />

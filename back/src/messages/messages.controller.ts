@@ -1,7 +1,8 @@
-import { BadRequestException, Controller, Get, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { MessagesService } from './messages.service';
 import { UserSession } from 'src/users/users.decorator';
+import { MessagesDto } from './messages.dto';
 
 @Controller('messages')
 export class MessagesController {
@@ -20,5 +21,16 @@ export class MessagesController {
 	@Get("groups")
 	async getGroups(@UserSession() user: User) {
 		return await this.messagesService.getGroups(user)
+	}
+
+	@Get(":groupName")
+	async getGroupMessages(@Param("groupName") groupName: string) {
+		return await this.messagesService.getGroupMessages(groupName)
+	}
+
+	@Post("send/:groupName")
+	@UsePipes(new ValidationPipe())
+	async sendMessage(@Body() body: MessagesDto, @UserSession() user: User, @Param("groupName") groupName: string) {
+		return body
 	}
 }

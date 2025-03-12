@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react"
 import { Box, Button, Divider, Drawer, Input, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
-import { Abc, Inbox, Mail } from "@mui/icons-material"
-import { ServerMessage, ServerMessageProps } from "../../utils/ServerMessage"
+import { Abc, Inbox } from "@mui/icons-material"
+import { ServerMessageProps } from "../../utils/ServerMessage"
 
-type GroupData = {
+export type GroupData = {
 	name: string,
 	id: number
 }
 
-function CreateGroupPart({message, setMessage}: ServerMessageProps) {
+function CreateGroupPart({setMessage}: ServerMessageProps) {
 	const [groupName, setGroupName] = useState("")
 
 	async function createForm() {
@@ -32,7 +32,7 @@ function CreateGroupPart({message, setMessage}: ServerMessageProps) {
 
 	return <>
 		<div onClick={e => e.stopPropagation()} style={{display: "flex", justifyContent: "center"}}>
-			<Input placeholder="Group name..." type="text"
+			<Input placeholder="Group's name to create..." type="text"
 				onChange={e => setGroupName(e.currentTarget.value)}/>
 		</div>
 		<ListItem disablePadding>
@@ -65,11 +65,11 @@ type DrawerListProps = {
 	groups: GroupData[]
 }
 
-function DrawerList({setOpen, groups, onGroupClick, message, setMessage}: DrawerListProps & ServerMessageProps) {
+function DrawerList({setOpen, groups, onGroupClick, setMessage}: DrawerListProps & ServerMessageProps) {
 	return (
 		<Box sx={{ width: 250 }} role="presentation" onClick={() => setOpen(false)}>
 			<List>
-				<CreateGroupPart {...{message, setMessage}}/>
+				<CreateGroupPart {...{setMessage}}/>
 			</List>
 			<Divider />
 			<List>
@@ -79,25 +79,30 @@ function DrawerList({setOpen, groups, onGroupClick, message, setMessage}: Drawer
 	)
 }
 
-export default function GroupList({message, setMessage}: ServerMessageProps) {
+export default function GroupList({message, setMessage, setGroup}: {setGroup: (g: GroupData) => void} & ServerMessageProps) {
 	const [groups, setGroups] = useState<GroupData[]>([])
 	const [open, setOpen] = useState(false)
 
 	function onGroupClick(group: GroupData) {
-		console.log(group)
+		setGroup(group)
 	}
 
 	useEffect(() => {
 		(async () => {
 			const res = await fetch("/api/messages/groups")
-			setGroups(await res.json())
+			const groups = await res.json()
+
+			if (groups.length > 0) {
+				setGroup(groups[0])
+			}
+			setGroups(groups)
 		})()
 	}, [message])
 
 	return <>
-		<Button variant="outlined" onClick={() => setOpen(true)}>Show group list</Button>
+		<Button variant="outlined" onClick={() => setOpen(true)}>Show joined groups</Button>
 		<Drawer onClose={() => setOpen(false)} open={open}>
-			<DrawerList {...{message, setMessage, onGroupClick, groups, setOpen}}/>
+			<DrawerList {...{setMessage, onGroupClick, groups, setOpen}}/>
 		</Drawer>
 	</>
 }

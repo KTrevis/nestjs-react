@@ -6,7 +6,7 @@ export type ServerMessage = {
 }
 
 export type ServerMessageProps = {
-	message: ServerMessage,
+	message?: ServerMessage,
 	setMessage: (message: ServerMessage) => void
 }
 

@@ -1,7 +1,7 @@
 import { Button, Input } from "@mui/material"
 import { ServerMessageProps } from "../../utils/ServerMessage"
 
-export default function CreateGroup({message, setMessage}: ServerMessageProps) {
+export default function CreateGroup({setMessage}: ServerMessageProps) {
 	const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault()
 		const form = e.currentTarget

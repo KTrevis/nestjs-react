@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Button, Card, CardActions, CardContent } from "@mui/material"
 import { ServerMessageProps } from "../../utils/ServerMessage"
 
-function FriendCard({username, message, setMessage}: {username: string} & ServerMessageProps) {
+function FriendCard({username, setMessage}: {username: string} & ServerMessageProps) {
 	async function removeFriend() {
 		const res = await fetch(`/api/friends/${username}`, {
 			method: "DELETE"
@@ -35,6 +35,6 @@ export default function FriendList({message, setMessage}: ServerMessageProps) {
 	}, [message])
 
 	return <>
-		{friends.map(username => <FriendCard key={username} {...{username, message, setMessage}}/>)}
+		{friends.map(username => <FriendCard key={username} {...{username, setMessage}}/>)}
 	</>
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ChatGroup, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -65,5 +65,21 @@ export class MessagesService {
 				id: group.chatGroup.id,
 			}
 		})
+	}
+
+	async getGroupMessages(groupName: string) {
+		const group = await this.prisma.chatGroup.findUnique({
+			where: {
+				name: groupName
+			},
+			include: {
+				messages: true
+			}
+		})
+
+		if (group == null) {
+			throw new NotFoundException("No group with this name has been found.")
+		}
+		return group.messages
 	}
 }

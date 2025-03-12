@@ -4,9 +4,8 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import { Link } from "react-router";
 import { Menu } from "@mui/icons-material";
 
-export default function Navbar({authenticated, setAuthenticated}: {
+export default function Navbar({setAuthenticated}: {
 	setAuthenticated: (authenticated: boolean) => void,
-	authenticated: boolean,
 }) {
 	const logout: React.MouseEventHandler<HTMLAnchorElement> = (e) => {
 		e.preventDefault()
