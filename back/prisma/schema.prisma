@@ -17,9 +17,9 @@ model User {
 
   friendshipSent     Friendship[]     @relation("sender")
   friendshipReceived Friendship[]     @relation("recipient")
-  chatGroupUsers     ChatGroupUsers[]
+  joinedGroups       ChatGroupUsers[]
   messages           Message[]
-  createGroups       ChatGroup[]
+  createdGroups      ChatGroup[]
 }
 
 model Friendship {

@@ -5,37 +5,43 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { JSX, useEffect, useRef, useState } from 'react'
 
-export default function Modal({actions}: {actions: JSX.Element}) {
-	const [open, setOpen] = useState(false);
+type ModalProps = {
+	actions: JSX.Element,
+	open: boolean,
+	setOpen: (open: boolean) => void,
+	title: string,
+	body: JSX.Element
+}
+
+export default function Modal(props: ModalProps) {
 	const descriptionElementRef = useRef<HTMLElement>(null);
 
 	useEffect(() => {
-		if (open) {
+		if (props.open) {
 			const { current: descriptionElement } = descriptionElementRef;
 			if (descriptionElement !== null) {
 				descriptionElement.focus();
 			}
 		}
-	}, [open]);
+	}, [props.open]);
 
 	return <>
-		<Button variant='outlined' onClick={() => setOpen(true)}>Send Message</Button>
 		<Dialog
 		fullWidth={true}
 		maxWidth="xs"
-		open={open}
+		open={props.open}
 		scroll={"paper"}
 		aria-labelledby="scroll-dialog-title"
 		aria-describedby="scroll-dialog-description">
-			<DialogTitle id="scroll-dialog-title">
-				<span>Messages</span>
-				<Button onClick={() => setOpen(false)}>Close</Button>
+			<DialogTitle style={{display: "flex", justifyContent: "space-between"}} id="scroll-dialog-title">
+				<span>{props.title}</span>
+				<Button onClick={() => props.setOpen(false)}>Close</Button>
 			</DialogTitle>
 			<DialogContent dividers={true}>
-			hello world
+			{props.body}
 			</DialogContent>
 			<DialogActions>
-				{actions}
+				{props.actions}
 			</DialogActions>
 		</Dialog>
 	</>

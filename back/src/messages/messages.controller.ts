@@ -1,4 +1,4 @@
-import { Controller, Param, Post } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, Post } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { MessagesService } from './messages.service';
 import { UserSession } from 'src/users/users.decorator';
@@ -9,6 +9,16 @@ export class MessagesController {
 
 	@Post("create-group/:name")
 	async createChatGroup(@UserSession() user: User, @Param("name") name: string) {
-		return name
+		name = name.trim()
+		if (name.length < 3) {
+			throw new BadRequestException("Group name must be at least 3 characters long.")
+		}
+		await this.messagesService.createChatGroup(user, name)
+		return {message: "Chat group successfully created."}
+	}
+
+	@Get("groups")
+	async getGroups(@UserSession() user: User) {
+		return await this.messagesService.getGroups(user)
 	}
 }

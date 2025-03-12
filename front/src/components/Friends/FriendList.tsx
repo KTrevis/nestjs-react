@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { Button, Card, CardActions, CardContent } from "@mui/material"
 import { ServerMessageProps } from "../../utils/ServerMessage"
-import ChatUI from "./ChatUI"
 
 function FriendCard({username, message, setMessage}: {username: string} & ServerMessageProps) {
 	async function removeFriend() {
@@ -19,7 +18,6 @@ function FriendCard({username, message, setMessage}: {username: string} & Server
 		<Card style={{display: "block", margin: "auto", width: "30rem", maxWidth: "95vw"}}>
 			<CardContent style={{textAlign: "center"}}>{username}</CardContent>
 			<CardActions style={{display: "flex", justifyContent: "center", gap: "1rem", width: "100%"}}>
-				<ChatUI recipient={username}/>
 				<Button onClick={removeFriend} color="error" variant="outlined">Remove friend</Button>
 			</CardActions>
 		</Card>

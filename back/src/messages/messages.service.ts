@@ -41,4 +41,25 @@ export class MessagesService {
 			}
 		})
 	}
+
+	async getGroups(user: User) {
+		const res = await this.prisma.user.findUnique({
+			where: {
+				username: user.username
+			},
+			include: {
+				joinedGroups: {
+					include: {
+						chatGroup: true
+					}
+				}
+			}
+		})
+		return res?.joinedGroups.map(group => {
+			return {
+				name: group.chatGroup.name,
+				id: group.chatGroup.id
+			}
+		})
+	}
 }
