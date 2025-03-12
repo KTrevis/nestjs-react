@@ -1,14 +1,34 @@
 import { useEffect, useState } from "react"
 import { Box, Button, Divider, Drawer, Input, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
 import { Abc, Inbox, Mail } from "@mui/icons-material"
+import { ServerMessage, ServerMessageProps } from "../../utils/ServerMessage"
 
 type GroupData = {
 	name: string,
 	id: number
 }
 
-function CreateGroupPart() {
+function CreateGroupPart({message, setMessage}: ServerMessageProps) {
 	const [groupName, setGroupName] = useState("")
+
+	async function createForm() {
+		if (groupName.trim().length == 0) {
+			setMessage({
+				severity: "error",
+				message: "Group name cannot be empty."
+			})
+			return
+		}
+
+		const res = await fetch(`/api/messages/create-group/${groupName}`, {
+			method: "POST"
+		})
+
+		setMessage({
+			severity: res.status >= 400 ? "error" : "success",
+			message: (await res.json()).message
+		})
+	}
 
 	return <>
 		<div onClick={e => e.stopPropagation()} style={{display: "flex", justifyContent: "center"}}>
@@ -16,7 +36,7 @@ function CreateGroupPart() {
 				onChange={e => setGroupName(e.currentTarget.value)}/>
 		</div>
 		<ListItem disablePadding>
-			<ListItemButton>
+			<ListItemButton onClick={createForm}>
 			<ListItemIcon>
 				<Inbox />
 			</ListItemIcon>
@@ -45,11 +65,11 @@ type DrawerListProps = {
 	groups: GroupData[]
 }
 
-function DrawerList({setOpen, groups, onGroupClick}: DrawerListProps) {
+function DrawerList({setOpen, groups, onGroupClick, message, setMessage}: DrawerListProps & ServerMessageProps) {
 	return (
 		<Box sx={{ width: 250 }} role="presentation" onClick={() => setOpen(false)}>
 			<List>
-				<CreateGroupPart/>
+				<CreateGroupPart {...{message, setMessage}}/>
 			</List>
 			<Divider />
 			<List>
@@ -59,9 +79,9 @@ function DrawerList({setOpen, groups, onGroupClick}: DrawerListProps) {
 	)
 }
 
-export default function GroupList() {
+export default function GroupList({message, setMessage}: ServerMessageProps) {
 	const [groups, setGroups] = useState<GroupData[]>([])
-	const [drawer, setDrawer] = useState(false)
+	const [open, setOpen] = useState(false)
 
 	function onGroupClick(group: GroupData) {
 		console.log(group)
@@ -72,12 +92,12 @@ export default function GroupList() {
 			const res = await fetch("/api/messages/groups")
 			setGroups(await res.json())
 		})()
-	}, [])
+	}, [message])
 
 	return <>
-		<Button variant="outlined" onClick={() => setDrawer(true)}>Show group list</Button>
-		<Drawer onClose={() => setDrawer(false)} open={drawer}>
-			<DrawerList onGroupClick={onGroupClick} groups={groups} setOpen={setDrawer}/>
+		<Button variant="outlined" onClick={() => setOpen(true)}>Show group list</Button>
+		<Drawer onClose={() => setOpen(false)} open={open}>
+			<DrawerList {...{message, setMessage, onGroupClick, groups, setOpen}}/>
 		</Drawer>
 	</>
 }

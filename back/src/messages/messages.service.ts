@@ -28,7 +28,7 @@ export class MessagesService {
 		await this.prisma.chatGroupUsers.create({
 			data: {
 				chatGroupId: group.id,
-				userId: creator.id
+				creatorId: creator.id
 			}
 		})
 	}
@@ -37,7 +37,7 @@ export class MessagesService {
 		await this.prisma.chatGroupUsers.create({
 			data: {
 				chatGroupId: group.id,
-				userId: user.id
+				creatorId: user.id
 			}
 		})
 	}
@@ -55,10 +55,14 @@ export class MessagesService {
 				}
 			}
 		})
-		return res?.joinedGroups.map(group => {
+
+		if (res == null) {
+			return []
+		}
+		return res.joinedGroups.map(group => {
 			return {
 				name: group.chatGroup.name,
-				id: group.chatGroup.id
+				id: group.chatGroup.id,
 			}
 		})
 	}

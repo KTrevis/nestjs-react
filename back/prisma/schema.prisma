@@ -36,7 +36,7 @@ model Friendship {
 
 model ChatGroup {
   id             Int              @id @default(autoincrement())
-  name           String
+  name           String           @unique
 
   creator        User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   creatorId      Int
@@ -46,13 +46,13 @@ model ChatGroup {
 }
 
 model ChatGroupUsers {
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId Int
+  creator   User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId Int
 
   chatGroup   ChatGroup @relation(fields: [chatGroupId], references: [id], onDelete: Cascade)
   chatGroupId Int
 
-  @@id([userId, chatGroupId])
+  @@id([creatorId, chatGroupId])
 }
 
 model Message {

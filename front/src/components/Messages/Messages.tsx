@@ -6,9 +6,8 @@ import GroupList from "./GroupList"
 export default function Messages() {
 	const [message, setMessage] = useState<ServerMessage>({severity: "success", message: ""})
 
-	// <CreateGroup {...{message, setMessage}}/>
 	return <>
 		<ServerAlert message={message}/>
-		<GroupList/>
+		<GroupList {...{message, setMessage}}/>
 	</>
 }
