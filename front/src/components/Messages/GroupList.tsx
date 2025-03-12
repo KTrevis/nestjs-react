@@ -26,6 +26,19 @@ function CreateGroupPart() {
 	</>
 }
 
+function GroupItem({group, onGroupClick}: {group: GroupData, onGroupClick: (g: GroupData) => void}) {
+	return <>
+		<ListItem key={group.id} disablePadding>
+			<ListItemButton onClick={() => onGroupClick(group)}>
+				<ListItemIcon>
+					<Abc />
+				</ListItemIcon>
+				<ListItemText primary={group.name} />
+			</ListItemButton>
+		</ListItem>
+	</>
+}
+
 type DrawerListProps = {
 	onGroupClick: (group: GroupData) => void,
 	setOpen: (a: boolean) => void,
@@ -40,16 +53,7 @@ function DrawerList({setOpen, groups, onGroupClick}: DrawerListProps) {
 			</List>
 			<Divider />
 			<List>
-		{groups.map(group => (
-				<ListItem key={group.id} disablePadding>
-					<ListItemButton onClick={() => onGroupClick(group)}>
-						<ListItemIcon>
-							<Abc />
-						</ListItemIcon>
-						<ListItemText primary={group.name} />
-					</ListItemButton>
-				</ListItem>
-		))}
+				{groups.map(group => <GroupItem key={group.id} {...{group, onGroupClick}}/>)}
 			</List>
 		</Box>
 	)
