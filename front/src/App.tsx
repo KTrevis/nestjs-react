@@ -11,7 +11,7 @@ export default function AppRoutes() {
 	const [authenticated, setAuthenticated] = useState(true)
 
 	async function getAuthStatus() {
-		const res = await fetch("/api/auth/authenticated")
+		const res = await fetch("/api/auth/status")
 		setAuthenticated(res.status < 400) // if no error = authenticated
 		
 		if (res.status == 502) {
