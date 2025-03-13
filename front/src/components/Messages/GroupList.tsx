@@ -46,6 +46,10 @@ function CreateGroupPart({setMessage}: ServerMessageProps) {
 	</>
 }
 
+function JoinGroup({groupName}: {groupName: string}) {
+	return <></>
+}
+
 function GroupItem({group, onGroupClick}: {group: GroupData, onGroupClick: (g: GroupData) => void}) {
 	return <>
 		<ListItem key={group.id} disablePadding>

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import { GroupData } from "./GroupList"
 import { Button, Card, Input, Paper } from "@mui/material"
+import { Socket } from "socket.io-client"
 
-function SendMessageForm({getMessages, group}: {getMessages: () => Promise<void>, group: GroupData}) {
+function SendMessageForm({group}: {group: GroupData}) {
 	const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
 		e.preventDefault()
 		const form = e.currentTarget
@@ -20,7 +21,6 @@ function SendMessageForm({getMessages, group}: {getMessages: () => Promise<void>
 			body: JSON.stringify({message}),
 			headers: {"Content-Type": "application/json"}
 		})
-		getMessages()
 	}
 	const formStyle: React.CSSProperties = {
 		flexDirection: "row",
@@ -63,20 +63,23 @@ function MessageCard({message, from, username}: {username: string, message: stri
 	</>
 }
 
-export default function MessageList({group}: {group: GroupData | undefined}) {
-	const [messages, setMessages] = useState<{from: string, message: string}[]>([])
+type Message = {
+	from: string,
+	message: string
+}
+
+export default function MessageList({group, socket}: {socket: Socket, group: GroupData | undefined}) {
+	const [messages, setMessages] = useState<Message[]>([])
 	const [username, setUsername] = useState("")
 
-	async function getMessages() {
-		if (group == undefined) {
-			return
-		}
-		const res = await fetch(`/api/messages/${group.name}`)
-		setMessages(await res.json())
-	}
-
 	useEffect(() => {
-		getMessages()
+		(async () => {
+			if (group == undefined) {
+				return
+			}
+			const res = await fetch(`/api/messages/${group.name}`)
+			setMessages(await res.json())
+		})()
 	}, [group])
 
 	useEffect(() => {
@@ -84,6 +87,9 @@ export default function MessageList({group}: {group: GroupData | undefined}) {
 			const res = await fetch("/api/auth/status")
 			setUsername((await res.json()).username)
 		})()
+		socket.on("new-message", (data: Message) => {
+			setMessages(messages => [...messages, data])
+		})
 	}, [])
 
 	if (group == undefined) {
@@ -98,6 +104,6 @@ export default function MessageList({group}: {group: GroupData | undefined}) {
 			{ messages.map((message, index) => <MessageCard key={index}
 						  username={username} message={message.message} from={message.from}/>) }
 		</div>
-		<SendMessageForm {...{getMessages, group}}/>
+		<SendMessageForm {...{group}}/>
 	</>
 }

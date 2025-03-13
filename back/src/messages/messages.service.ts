@@ -1,14 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { ChatGroup, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { MessagesGateway } from './messages.gateway';
 
 @Injectable()
 export class MessagesService {
 	constructor(
 		private prisma: PrismaService,
+		private gateway: MessagesGateway
 	) {}
 
 	async sendMessage(message: string, sender: User, group: ChatGroup) {
+		this.gateway.sendMessageToGroup(group.name, message, sender.username)
 		await this.prisma.message.create({
 			data: {
 				message: message,
@@ -19,12 +22,23 @@ export class MessagesService {
 	}
 
 	async createChatGroup(creator: User, name: string) {
-		const group = await this.prisma.chatGroup.create({
-			data: {
-				name: name,
-				creatorId: creator.id,
-			}
-		})
+		let group: {
+			name: string
+			id: number
+			creatorId: number
+		}
+
+		try {
+			group = await this.prisma.chatGroup.create({
+				data: {
+					name: name,
+					creatorId: creator.id,
+				}
+			})
+		} catch {
+			throw new ConflictException("A group with this name already exists.")
+		}
+
 		await this.prisma.chatGroupUsers.create({
 			data: {
 				chatGroupId: group.id,
