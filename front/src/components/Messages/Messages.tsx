@@ -33,22 +33,35 @@ function SendMessageForm({group}: {group: GroupData}) {
 	</>
 }
 
+function MessageCard({message, from}: {message: string, from: string}) {
+	return <>
+		<div>{message}</div>
+		<div>from {from}</div>
+	</>
+}
+
 function MessageList({group}: {group: GroupData | undefined}) {
+	const [messages, setMessages] = useState<{from: string, message: string}[]>([])
+
+	useEffect(() => {
+		(async () => {
+			if (group == undefined) {
+				return
+			}
+			const res = await fetch(`/api/messages/${group.name}`)
+			setMessages(await res.json())
+		})()
+	}, [group])
+
 	if (group == undefined) {
 		return <>
 			<p>Join or create a group to start chatting.</p>
 		</>
 	}
 
-	async function getMessages() {
-		const res = await fetch(`/api/messages/${group!.name}`)
-		console.log("messages in group", group!.name, await res.text())
-	}
-
-	useEffect(() => { getMessages() }, [])
-
 	return <>
 		<p>Current group: {group.name}</p>
+		{ messages.map((message, index) => <MessageCard key={index} message={message.message} from={message.from}/>) }
 		<SendMessageForm {...{group}}/>
 	</>
 }

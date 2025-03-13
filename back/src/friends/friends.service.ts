@@ -70,7 +70,7 @@ export class FriendsService {
 				sender: true
 			}
 		})
-		return Array.from(invitations, (invitation) => invitation.sender.username)
+		return invitations.map(invitation => invitation.sender.username)
 	}
 
 	async acceptRequest(recipient: User, sender: User) {
@@ -126,7 +126,7 @@ export class FriendsService {
 				recipient: true
 			}
 		})
-		return Array.from(friendships, friendship => {
+		return friendships.map(friendship => {
 			if (friendship.sender.username != user.username) {
 				return friendship.sender.username
 			}

@@ -31,6 +31,10 @@ export class MessagesService {
 				creatorId: creator.id
 			}
 		})
+		return {
+			id: group.id,
+			name: group.name
+		}
 	}
 
 	async addUserToGroup(user: User, group: ChatGroup) {
@@ -73,13 +77,35 @@ export class MessagesService {
 				name: groupName
 			},
 			include: {
-				messages: true
+				messages: {
+					include: {
+						user: true
+					}
+				}
 			}
 		})
 
 		if (group == null) {
 			throw new NotFoundException("No group with this name has been found.")
 		}
-		return group.messages
+		return group.messages.map(message => {
+			return {
+				message: message.message,
+				from: message.user.username
+			}
+		})
+	}
+
+	async getGroup(groupName: string) {
+		const group = await this.prisma.chatGroup.findUnique({
+			where: {
+				name: groupName
+			}
+		})
+
+		if (group == null) {
+			throw new NotFoundException("No group with this name has been found.")
+		}
+		return group
 	}
 }

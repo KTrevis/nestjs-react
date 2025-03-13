@@ -14,8 +14,8 @@ export class MessagesController {
 		if (name.length < 3) {
 			throw new BadRequestException("Group name must be at least 3 characters long.")
 		}
-		await this.messagesService.createChatGroup(user, name)
-		return {message: "Chat group successfully created."}
+		const group = await this.messagesService.createChatGroup(user, name)
+		return {...group, message: "Chat group successfully created."}
 	}
 
 	@Get("groups")
@@ -31,6 +31,8 @@ export class MessagesController {
 	@Post("send/:groupName")
 	@UsePipes(new ValidationPipe())
 	async sendMessage(@Body() body: MessagesDto, @UserSession() user: User, @Param("groupName") groupName: string) {
-		return body
+		const group = await this.messagesService.getGroup(groupName)
+		await this.messagesService.sendMessage(body.message, user, group)
+		return {message: "Message sent."}
 	}
 }
