@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Box, Button, Divider, Drawer, Input, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material"
 import { Abc, Inbox } from "@mui/icons-material"
-import { ServerMessageProps } from "../../utils/ServerMessage"
+import { ServerMessage, ServerMessageProps } from "../../utils/ServerMessage"
 
 export type GroupData = {
 	name: string,
@@ -11,7 +11,7 @@ export type GroupData = {
 function CreateGroupPart({setMessage}: ServerMessageProps) {
 	const [groupName, setGroupName] = useState("")
 
-	async function createForm() {
+	async function createGroup() {
 		if (groupName.trim().length == 0) {
 			setMessage({
 				severity: "error",
@@ -36,7 +36,7 @@ function CreateGroupPart({setMessage}: ServerMessageProps) {
 				onChange={e => setGroupName(e.currentTarget.value)}/>
 		</div>
 		<ListItem disablePadding>
-			<ListItemButton onClick={createForm}>
+			<ListItemButton onClick={createGroup}>
 			<ListItemIcon>
 				<Inbox />
 			</ListItemIcon>
@@ -46,8 +46,41 @@ function CreateGroupPart({setMessage}: ServerMessageProps) {
 	</>
 }
 
-function JoinGroup({groupName}: {groupName: string}) {
-	return <></>
+function JoinGroup({setMessage}: ServerMessageProps) {
+	const [groupName, setGroupName] = useState("")
+
+	async function joinGroup() {
+		if (groupName.trim().length == 0) {
+			setMessage({
+				severity: "error",
+				message: "Group name cannot be empty."
+			})
+			return
+		}
+		const res = await fetch(`/api/messages/join-group/${groupName}`, {
+			method: "POST"
+		})
+
+		setMessage({
+			severity: res.status >= 400 ? "error" : "success",
+			message: (await res.json()).message
+		})
+	}
+
+	return <>
+		<div onClick={e => e.stopPropagation()} style={{display: "flex", justifyContent: "center"}}>
+			<Input placeholder="Group's name to join..." type="text"
+				onChange={e => setGroupName(e.currentTarget.value)}/>
+		</div>
+		<ListItem disablePadding>
+			<ListItemButton onClick={joinGroup}>
+			<ListItemIcon>
+				<Inbox />
+			</ListItemIcon>
+			<ListItemText primary={"Join group"} />
+			</ListItemButton>
+		</ListItem>
+	</>
 }
 
 function GroupItem({group, onGroupClick}: {group: GroupData, onGroupClick: (g: GroupData) => void}) {
@@ -74,6 +107,7 @@ function DrawerList({setOpen, groups, onGroupClick, setMessage}: DrawerListProps
 		<Box sx={{ width: 250 }} role="presentation" onClick={() => setOpen(false)}>
 			<List>
 				<CreateGroupPart {...{setMessage}}/>
+				<JoinGroup {...{setMessage}}/>
 			</List>
 			<Divider />
 			<List>

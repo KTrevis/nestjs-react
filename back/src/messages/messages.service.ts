@@ -52,12 +52,16 @@ export class MessagesService {
 	}
 
 	async addUserToGroup(user: User, group: ChatGroup) {
-		await this.prisma.chatGroupUsers.create({
-			data: {
-				chatGroupId: group.id,
-				creatorId: user.id
-			}
-		})
+		try {
+			await this.prisma.chatGroupUsers.create({
+				data: {
+					chatGroupId: group.id,
+					creatorId: user.id
+				}
+			})
+		} catch {
+			throw new ConflictException("You already are in this group.")
+		}
 	}
 
 	async getGroups(user: User) {
@@ -114,7 +118,7 @@ export class MessagesService {
 		const group = await this.prisma.chatGroup.findUnique({
 			where: {
 				name: groupName
-			}
+			},
 		})
 
 		if (group == null) {

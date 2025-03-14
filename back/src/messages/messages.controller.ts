@@ -35,4 +35,11 @@ export class MessagesController {
 		await this.messagesService.sendMessage(body.message, user, group)
 		return {message: "Message sent."}
 	}
+
+	@Post("join-group/:name")
+	async joinChatGroup(@UserSession() user: User, @Param("name") name: string) {
+		const group = await this.messagesService.getGroup(name)
+		await this.messagesService.addUserToGroup(user, group)
+		return {message: "Group successfully joined."}
+	}
 }

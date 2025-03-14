@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { GroupData } from "./GroupList"
 import { Button, Card, Input, Paper } from "@mui/material"
 import { Socket } from "socket.io-client"
@@ -87,10 +87,15 @@ export default function MessageList({group, socket}: {socket: Socket, group: Gro
 			const res = await fetch("/api/auth/status")
 			setUsername((await res.json()).username)
 		})()
+
 		socket.on("new-message", (data: Message) => {
 			setMessages(messages => [...messages, data])
 		})
 	}, [])
+
+	useEffect(() => {
+		window.scrollTo({top: document.body.scrollHeight, behavior: "smooth"})
+	}, [messages])
 
 	if (group == undefined) {
 		return <>
